@@ -1,0 +1,850 @@
+ffosh Test Guideline
+
+Run ./ffosh to start my shell
+
+----------Step1----------
+(1) Run
+
+
+You will see that it prints nothing but
+ffosh:/home/hw250/ece551/mp_miniproject $
+which is correct because there is no argument.
+
+(2) Run
+
+  (some whitespace)
+
+You will see that it prints nothing but
+ffosh:/home/hw250/ece551/mp_miniproject $
+which is correct because there is only whitespace. In fact, any numbers of whilespaces will be treated with nothing input.
+
+(3) Run
+
+/bin/ls
+
+You will see that it prints
+Makefile  README  TESTING.txt  TESTING.txt~  commandShell.txt  ffosh  input.txt  myShell.cpp  myShell.cpp~  myShell.h  myShell.h~  numerics.txt  test  test.cpp
+Program was successful
+which is correct because /bin/ls is executable program, which print the list of items in the current directory.
+
+(4) Run
+
+l
+
+You will see that it prints
+Command l not found
+Program failed with code 1
+which is correct because l is not found in ECE551PATH.(Step2)
+
+(5) Run
+
+/test
+
+You will see that it prints
+Command /test not found
+Program failed with code 1
+which is correct because /test is not found.
+
+(6) Run
+
+/home/hw250/ece551/mp_miniproject/README
+
+You will see that it prints
+execve failed!
+Program failed with code 1
+which is correct because README is not executable.
+
+(7) Run
+
+/home/hw250/ece551/mp_miniproject/test
+
+You will see that it prints
+/home/hw250/ece551/mp_miniproject/test
+Program was successful
+which is correct because test is my program which prints the arguments it received.
+
+(8) Run
+
+/home/hw250/ece551/mp_miniproject/testdir
+
+You will see that it prints
+execve failed!
+Program failed with code 1
+which is correct because testdir is directory which is not executable.
+
+(9) Run
+
+/home/hw250/ece551/mp_miniproject/testdir/test_seg
+
+You will see that it prints
+Terminated by signal 11
+which is correct because the program is segmentation fault.
+
+(10) Run
+
+exit
+
+You will see that it exits
+which is correct.
+
+(11) Run Ctrl+D on keyboard
+You will see that it exits
+which is correct.
+
+
+----------Step2----------
+(12) Run
+
+ls
+
+You will see that it prints
+'#TESTING.txt#'   README        TESTING.txt~       ffosh       myShell.cpp    myShell.h    numerics.txt   test.cpp
+ Makefile         TESTING.txt   commandShell.txt   input.txt   myShell.cpp~   myShell.h~   test
+Program was successful
+which is correct because it searches path from ECE551PATH, and "ls" is in /bin.
+
+(13) Run
+
+ffosh
+
+You will see that it prints
+Command ffosh not found
+Program failed with code 1
+which is correct because "ffosh" is not in ECE551PATH.
+
+(14) Run
+
+./test
+
+You will see that it prints
+./test
+Program was successful
+which is correct because "./test" will be translated into "/home/hw250/ece551/mp_miniproject/test", then will be executed.
+Noted that test is a executable file whose function is to print the arguments it received. The following "test" is the same.
+
+(15) Run
+
+./ffosh
+
+You will see that it prints nothing
+which is correct because it executes itself. If you input "exit", it will exit current layer of program, and return previous layer.
+
+(16) Run
+
+../mp_miniproject
+
+You will see that it prints
+execve failed!
+Program failed with code 1
+which is correct because it executes "mp_miniproject", which is a directory.
+
+(17) Run
+
+./README
+
+You will see that it prints
+execve failed!
+Program failed with code 1
+which is correct because it executes "README" in current directory, which is not a executable file.
+
+(18) Run
+
+../../ece551/mp_miniproject/./test
+
+You will see that it prints
+../../ece551/mp_miniproject/./test
+Program was successful
+which is correct because it executes "test" in current directory, and prints argument it received.
+
+(19) Run
+
+echo hello
+
+You will see that it prints
+hello
+Program was successful
+which is correct because "hello" is "echo"'s first argument. "echo" is in "/bin/echo", so it will be executed. "echo" function will print what it received, so it prints "hello".
+
+(20) Run
+
+echo hello    hello2
+
+You will see that it prints
+hello hello2
+Program was successful
+which is correct because hello hello2 is two arguments echo receieved.
+
+(21) Run
+
+echo   "a   b"  c     "def    ghi"
+
+You will see that it prints
+a   b c def    ghi
+Program was successful
+which is correct because arguments could not be separated by the whitespace in the quotes.
+
+(22) Run
+
+echo   "\"hello world\""   "a\\b\\c d\\"
+
+You will see that it prints
+"hello world" a\b\c d\
+Program was successful
+which is correct because "\"" and "\\" in quote will be translated into """(just quote) and "\"(just backslash).
+
+(23) Run
+
+echo   "\a\ \\\\\""
+
+You will see that it prints
+\a\ \\"
+Program was successful
+which is correct with the same reason previously.
+
+(24) Run
+
+echo   123"abc\abc"123
+
+You will see that it prints
+123abc\abc123
+Program was successful
+which is correct with the same reason previously.
+
+(25) Run
+
+echo hello\ \ world
+
+You will see that it prints
+hello  world
+Program was successful
+which is correct because "\ " will be translated into " " outside quote.
+
+(26) Run
+
+echo a\bcd\!\@\#\"\\
+
+You will see that it prints
+abcd!@#"\
+which is correct because "\something" will be translated into "something" outside quote.
+
+(27) Run
+
+echo "a\bcd\!\@\#\"\\"
+
+You will see that it prints
+a\bcd\!\@\#"\
+Program was successful
+which is correct because when in quote, just "\"" and "\\" will be translated (but not anything like outside quote).
+
+(28) Run
+
+echo abc"abc
+
+You will see that it prints
+Quotes Error
+
+which is correct because it has an unclosed quotation mark at the end of the command line.
+
+(29) Run
+
+echo \"abc\\"
+
+You will see that it prints
+Quotes Error
+
+which is correct because it has an unclosed quotation mark at the end of the command line.
+
+(30) Run
+
+echo abc\
+
+You will see that it prints
+abc
+which is correct because I just igore the single backslash at the end of the command line.
+
+(31) Run
+
+     echo     abc     123
+
+You will see that it prints
+abc 123
+which is correct because the whitespace before the first argument is ignored.
+
+(32) Run
+
+ls -l
+
+You will see that it prints
+total 696
+-rw-rw-r-- 1 hw250 hw250   7907 Nov 22 20:13  commandShell.txt
+-rwxrwxr-x 1 hw250 hw250 444392 Dec  7 22:56  ffosh
+-rw-rw-r-- 1 hw250 hw250    323 Dec  8 05:14  grade.txt
+-rw-rw-r-- 1 hw250 hw250 154081 Dec  3 09:56  hw250_delivery.zip
+-rw-rw-r-- 1 hw250 hw250     34 Nov 24 06:34  input.txt
+-rw-rw-r-- 1 hw250 hw250     91 Nov 29 07:56  Makefile
+-rw-rw-r-- 1 hw250 hw250   2257 Dec  7 22:53  myShell.cpp
+-rw-rw-r-- 1 hw250 hw250   2107 Nov 25 01:31  myShell.cpp~
+-rw-rw-r-- 1 hw250 hw250  10790 Dec  7 22:56  myShell.h
+-rw-rw-r-- 1 hw250 hw250   9327 Nov 25 01:27  myShell.h~
+-rw-rw-r-- 1 hw250 hw250  12413 Nov 22 20:13  numerics.txt
+-rw-rw-r-- 1 hw250 hw250   2499 Nov 22 20:13  README
+-rwxrwxr-x 1 hw250 hw250   8864 Nov 23 11:53  test
+-rw-rw-r-- 1 hw250 hw250    168 Nov 23 11:53  test.cpp
+drwxrwxr-x 2 hw250 hw250     42 Nov 29 09:36  testdir
+-rw-rw-r-- 1 hw250 hw250   7979 Dec  8 10:08 '#TESTING.txt#'
+-rw-rw-r-- 1 hw250 hw250   7839 Dec  8 10:05  TESTING.txt
+-rw-rw-r-- 1 hw250 hw250    213 Nov 29 07:45  TESTING.txt~
+Program was successful
+which is correct because "ls -l" shows file or directory, size, modified date and time, file or folder name and owner of file and its permission.
+
+----------Step3----------
+
+(33) Run
+
+cd
+
+You will see that it prints
+ffosh:/home/hw250 $
+which is correct because "cd" without arguments means go to home directory.
+
+(34) Run
+
+cd ~
+
+You will see that it prints
+ffosh:/home/hw250 $
+which is correct because "cd ~" means go to home directory.
+
+(35) Run(current directory: /home/hw250)
+
+cd .
+
+You will see that it prints
+ffosh:/home/hw250 $
+which is correct because "cd ." means go to the current directory.
+
+(36) Run(current directory: /home/hw250)
+
+cd ..
+
+You will see that it prints
+ffosh:/home $
+which is correct because "cd .." means go to the parent directory.
+
+(37) Run(current directory: /home)
+
+cd hw250
+
+You will see that it prints
+ffosh:/home/hw250 $
+which is correct because "hw250" is a directory in /home.
+
+(38) Run(current directory: /home/hw250)
+
+cd ece551/mp_miniproject
+
+You will see that it prints
+ffosh:/home/hw250/ece551/mp_miniproject $
+which is correct with the same reason.
+
+(39) Run(current directory: /home/hw250/ece551/mp_miniproject)
+
+cd README
+
+You will see that it prints
+README: No such file or directory
+which is correct because README is not a directory.
+
+(40) Run
+
+cd somefile
+
+You will see that it prints
+somefile: No such file or directory
+which is correct because somefile does not exist.
+
+(41) Run
+
+cd /bin
+
+You will see that it prints
+ffosh:/bin $
+which is correct because "/bin" is a valid path to directory
+
+(42) Run
+
+cd /bin/somefile
+
+You will see that it prints
+/bin/somefile: No such file or directory
+which is correct because "/bin/somefile" does not exist.
+
+(43) Run
+
+cd /
+cd ..
+
+You will see that it prints
+ffosh:/ $
+which is correct because "/" has no parent directory, so "cd .." is just itself.
+
+(44) Run
+
+cd .. 1
+
+You will see that it prints
+cd: too many arguments
+which is correct because "cd" only needs one argument.
+
+(45) Run
+
+env
+
+You will see that it prints
+LC_ALL=en_US.UTF-8
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+SSH_CONNECTION=10.200.74.140 9953 10.200.30.22 22
+LESSCLOSE=/usr/bin/lesspipe %s %s
+LANG=en_US.UTF-8
+DISPLAY=localhost:13.0
+EDITOR=emacs -nw
+S_COLORS=auto
+XDG_SESSION_ID=28794
+USER=hw250
+PWD=/home/hw250/ece551/mp_miniproject
+HOME=/home/hw250
+SSH_CLIENT=10.200.74.140 9953 22
+SSH_TTY=/dev/pts/12
+MAIL=/var/mail/hw250
+VISUAL=emacs -nw
+TERM=xterm
+SHELL=/bin/bash
+SHLVL=1
+LOGNAME=hw250
+XDG_RUNTIME_DIR=/run/user/1006
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+LESSOPEN=| /usr/bin/lesspipe %s
+OLDPWD=/home/hw250
+_=./ffosh
+ECE551PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+Program was successful
+which is correct because "env" is used to print environment variables. Noted that ECE551PATH is proper initialized in this environment variables' list.
+
+(46) Run
+
+set
+
+You will see that it prints
+set: Wrong numbers of the arguments
+which is correct because "set" needs arguments.
+
+(47) Run
+
+set x
+echo $x
+
+You will see that it prints
+
+Program was successful
+which is correct because x is set with the value "".
+
+(48) Run
+
+set x hello
+echo $x
+(env)
+
+You will see that it prints
+hello
+Program was successful
+which is correct because you set local variable "x" with the value "hello". And "$x" will be replaced by the value of "x". However, if you run "env", x will not appear, because "x" is local variable, and has not been exported yet.
+
+(49) Run
+
+set _123qweABC_ value
+echo $_123qweABC_
+
+You will see that it prints
+value
+Program was successful
+which is correct because '_', numbers and letters are all valid variable name.
+
+(50) Run
+
+set qwe! value
+
+You will see that it prints
+Invalid var name
+which is correct because '!' is not a valid variable name.
+
+(51) Run
+
+set \ value
+
+You will see that it prints
+Invalid var name
+which is correct because '\' is not a valid variable name.
+
+(52) Run
+
+set \x value
+echo $x
+
+You will see that it prints
+value
+Program was successful
+which is correct because we first translate "\x" with "x", which is a valid variable name, then prints its value out.
+
+(53) Run
+
+set "x" value
+echo $x
+
+You will see that it prints
+value
+Program was successful
+which is correct because we first translate ""x"" with "x", which is a valid variable name, then prints its value out.
+
+(54) Run
+
+set \"x value
+
+You will see that it prints
+Invalid var name
+which is correct because '"' is not a valid variable name.
+
+(55) Run
+
+set \\ value
+
+You will see that it prints
+Invalid var name
+which is correct because '\' is not a valid variable name.
+
+(56) Run
+
+set " " value
+
+You will see that it prints
+Invalid var name
+which is correct because ' ' is not a valid variable name.
+
+(57) Run
+
+set x value value   !@#$%\\123
+echo $x
+
+You will see that it prints
+value value   !@#$%\\123
+Program was successful
+which is correct because we should set the var to the string on the rest of the command line, even it contains spaces, etc..
+
+(59) Run
+
+set x hello
+set x
+echo $x
+
+You will see that it prints
+
+Program was successful
+which is correct because if set has one argument, it will set "x" with the value ""(zero length string).
+
+(58) Run
+
+set x value value   "!@#$%123
+
+You will see that it prints
+Quotes Error
+
+which is correct because of the following notice.
+
+NOTICE: In my program, I first split command line, then replace $VAR with its value, as a result, if the value(as an argument) of the command "set" has an unclosed quotation mark, the program will say Quotes Error.
+
+
+
+(59) Run
+
+echo $
+
+You will see that it prints
+$
+which is correct because the length of variable name is zero. We just print '$' out.
+
+(60) Run
+
+echo -$-
+
+You will see that it prints
+-$-
+Program was successful
+which is correct because of the same reason.
+
+(61) Run
+
+set x hello hi
+echo $x$x
+
+You will see that it prints
+hello hihello hi
+Program was successful
+which is correct because $x$x is legal, which combines its' value to itself.
+
+(62) Run
+
+set x xhello
+set y yhello
+echo $x$y
+
+You will see that it prints
+xhelloyhello
+Program was successful
+which is correct because $x$y combines x' value with y' value.
+
+(63) Run
+
+set x xhello
+set y yhello
+echo $xy--$x--$y--$x123--$$y
+
+You will see that it prints
+--xhello--yhello----$yhello
+Program was successful
+which is correct because we don't have $xy and $x123, so they can be treated as "". If there is no valid name after a '$'(zero length name), I just print '$' out.
+
+(64) Run
+
+set x hello
+set $x hellohello
+echo $x
+echo $hello
+
+You will see that it prints
+hello
+Program was successful
+then prints
+hellohello
+Program was successful
+which is correct because we first set "x" with value "hello", then we set $x, which is "hello" with the value "hellohello".
+
+(65) Run
+
+set myset set
+$myset x hello
+echo $x
+
+You will see that it prints
+hello
+Program was successful
+which is correct because we set "myset" with the value "set", so we can use "myset" as the same function as "set". Then we "set" x with value "hello", and print it out.
+
+(66) Run
+
+set x hello
+set x $x-$x
+echo $x
+
+You will see that it prints
+hello-hello
+Program was successful
+which is correct because the value of "x" is set with "$x-$x", which means "hello-hello".
+By now, we can see that each argument can be replaced by "$something".
+
+
+(67) Run
+
+set x hello
+export x
+echo $x
+env
+
+You will see that it first prints
+hello
+Program was successful
+then prints
+LC_ALL=en_US.UTF-8
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+SSH_CONNECTION=10.200.74.140 9953 10.200.30.22 22
+LESSCLOSE=/usr/bin/lesspipe %s %s
+LANG=en_US.UTF-8
+DISPLAY=localhost:13.0
+EDITOR=emacs -nw
+S_COLORS=auto
+XDG_SESSION_ID=28794
+USER=hw250
+PWD=/home/hw250/ece551/mp_miniproject
+HOME=/home/hw250
+SSH_CLIENT=10.200.74.140 9953 22
+SSH_TTY=/dev/pts/12
+MAIL=/var/mail/hw250
+VISUAL=emacs -nw
+TERM=xterm
+SHELL=/bin/bash
+SHLVL=1
+LOGNAME=hw250
+XDG_RUNTIME_DIR=/run/user/1006
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+LESSOPEN=| /usr/bin/lesspipe %s
+OLDPWD=/home/hw250
+_=./ffosh
+ECE551PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+x=hello
+Program was successful
+which is correct because x is not only a local variable, but also exported to the environment, so it appears in the environment variables' list.
+
+(68) Run
+
+set x hello
+export x
+set x bye
+echo $x
+env
+
+You will see that it prints
+bye
+Program was successful
+then prints
+...(same as before)
+x=hello
+Program was successful
+which is correct because in localVars, the value of "x" has changed to "bye". However, in environment variables, "x" has not changed(remaining "hello").
+If you then Run
+
+export x
+env
+
+You will see that it prints
+...(same as before)
+x=bye
+Program was successful
+which is correct because in environment variables, the value of "x" has changed to "bye".
+
+(69) Run
+
+export y
+
+You will see that it prints
+Could not find y in local varibles
+which is correct because there is not "y" in local variables.
+
+(70) Run
+
+export x x
+
+You will see that it prints
+export: need two arguments
+which is correct because export only needs two arguments.
+
+(71) Run
+
+set x hello
+export x
+rev x
+echo $x
+env
+
+You will see that it first prints
+olleh
+Program was successful
+then it prints
+...(same as before)
+x=hello
+Program was successful
+which is correct because "rev" reverses the value of "x", which is "hello", then in local variable, "x" is "olleh". However, in environment variables, the value of "x" is still "hello".
+If you then run
+
+export x
+env
+
+You will see that it prints
+...(same as before)
+x=olleh
+Program was successful
+which is correct because in environment variables, the value of "x" has changed to "olleh".
+
+(72) Run
+
+rev y
+
+You will see that it prints
+Could not find var
+which is correct because there is not "y" in local variables.
+
+(73) Run
+
+rev x x
+
+You will see that it prints
+rev: need two arguments
+which is correct because rev only needs two arguments.
+
+(74) Run
+
+echo $ECE551PATH
+(env)
+
+You will see that it prints
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+Program was successful
+which is correct because when the shell is initialized, ECE551PATH is added to the localVar.When you run "env", you will see that ECE551PATH has already in environment variables.
+
+(75) Run
+
+set ECE551PATH /usr:/bin
+ls
+
+You will see that it prints
+ commandShell.txt     input.txt      myShell.h      test             TESTING.txt
+ ffosh                Makefile       myShell.h~     test.cpp         TESTING.txt~
+ grade.txt            myShell.cpp    numerics.txt   testdir
+ hw250_delivery.zip   myShell.cpp~   README        '#TESTING.txt#'
+Program was successful
+which is correct because "ls" is in "/bin", so it can be found.
+
+(76) Run
+
+set ECE551PATH /usr:/bin
+env
+
+You will see that it prints
+Command env not found
+Program failed with code 1
+which is correct because "env" is in "/usr/bin", and the current "ECE551PATH" doesn't include "/usr/bin", so "env" could not be found.
+
+(77) Run
+
+set ECE551PATH /usr:/bin
+/usr/bin/env
+
+You will see that it prints
+...(same as before)
+ECE551PATH=/usr:/bin
+which is correct because when you change ECE551PATH, you directly change this variable in the environment(Of course, localVars is also changed).
+
+(78) Run
+
+set ECE551PATH /home/hw250/ece551/mp_miniproject:$ECE551PATH
+test 1 2
+
+You will see that it prints
+/home/hw250/ece551/mp_miniproject/test
+1
+2
+Program was successful
+which is correct because the shell will search "test" first in "/home/hw250/ece551/mp_miniproject" path, which exists, so it executes "test"(the function of test is mentioned above).
+
+(79) Run
+
+set ECE551PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+env
+
+You will see that it prints
+...(same as before)
+ECE551PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+which is correct because ECE551PATH is back to normal(the same as PATH), and "env" can be normally executed.
+
+----------step4----------
+None
+
+/**********Thanks for Testing!**********/
+
